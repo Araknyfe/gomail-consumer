@@ -14,8 +14,8 @@ var box = packr.New("templateBox", "./templates")
 func sendEmail(recipients []*email.Recipient, campaign email.Campaign) {
 	// Sender data.
 	from := "swatxmathis@gmail.com"
-	password := "thpatiyapidu72"
-
+	password := "PWD"
+	
 	// smtp server configuration.
 	smtpHost := "smtp.gmail.com"
 	smtpPort := "587"
@@ -42,7 +42,7 @@ func sendEmail(recipients []*email.Recipient, campaign email.Campaign) {
 		var body bytes.Buffer
 
 		mimeHeaders := "MIME-version: 1.0;\nContent-Type: text/html; charset=\"UTF-8\";\n\n"
-		body.Write([]byte(fmt.Sprintf("Subject: This is a test subject \n%s\n\n", mimeHeaders)))
+		body.Write([]byte(fmt.Sprintf("Objet: Mail de bienvenue \n%s\n\n", mimeHeaders)))
 
 		t.Execute(&body, struct {
 			FirstName string

@@ -16,6 +16,10 @@ LABEL maintainer="Equipe 01 - Hetic"
 WORKDIR /go/src/gomail-consumer
 COPY go.sum go.mod /go/src/gomail-consumer/
 
+# Install and run packr
+RUN go get -u github.com/gobuffalo/packr/v2/packr2
+RUN packr2
+
 # Download all dependancies. Dependencies will be cached if the go.mod and go.sum files are not changed
 RUN go mod download
 

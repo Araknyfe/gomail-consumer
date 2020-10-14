@@ -12,6 +12,7 @@ import (
 )
 
 var (
+	//DbConn is a global db connexion var
 	DbConn *sql.DB
 )
 
@@ -90,8 +91,8 @@ func main() {
 			log.Printf("campaign: %+v", campaignFromRepo)
 			log.Printf("mailing list: %+v", mailingList)
 
-			if mailingList.Recipients != nil {
-				sendEmail(mailingList.Recipients)
+			if mailingList.Recipients != nil && campaign.TemplatePath != "" {
+				sendEmail(mailingList.Recipients, campaign)
 			}
 		}
 	}()

@@ -11,20 +11,20 @@ import (
 
 var box = packr.New("templateBox", "./templates")
 
-func sendEmail(recipients []*email.Recipient) {
+func sendEmail(recipients []*email.Recipient, campaign email.Campaign) {
 	// Sender data.
 	from := "swatxmathis@gmail.com"
-	password := "thpatiyapidu72"
+	password := "PWD"
 	
 	// smtp server configuration.
 	smtpHost := "smtp.gmail.com"
 	smtpPort := "587"
 
 	for _, recipient := range recipients {
-		tpl := template.New("welcome.html") // Create a template.
+		tpl := template.New(campaign.TemplatePath) // Create a template.
 
 		// Get the string representation of a file, or an error if it doesn't exist:
-		html, err := box.FindString("welcome.html")
+		html, err := box.FindString(campaign.TemplatePath)
 		if err != nil {
 			fmt.Println(err)
 			return
@@ -45,13 +45,13 @@ func sendEmail(recipients []*email.Recipient) {
 		body.Write([]byte(fmt.Sprintf("Objet: Mail de bienvenue \n%s\n\n", mimeHeaders)))
 
 		t.Execute(&body, struct {
-			FirstName   string
-			LastName    string
-			URL			string
+			FirstName string
+			LastName  string
+			URL       string
 		}{
-			FirstName:	recipient.FirstName,
-			LastName:	recipient.LastName,
-			URL:	 "www.google.com",
+			FirstName: recipient.FirstName,
+			LastName:  recipient.LastName,
+			URL:       "www.google.com",
 		})
 
 		to := []string{

@@ -1,40 +1,66 @@
 package main
 
 import (
+	"bytes"
 	"fmt"
 	"github.com/Traineau/gomail/email"
+	"github.com/gobuffalo/packr/v2"
+	"html/template"
 	"net/smtp"
 )
 
-func sendEmail(recipients []*email.Recipient) {
+var box = packr.New("templateBox", "./templates")
 
+func sendEmail(recipients []*email.Recipient) {
 	// Sender data.
 	from := "swatxmathis@gmail.com"
 	password := "<Email Password>"
-
-	// Receiver email address.
-
-	var to []string
-
-	for _, recipient := range recipients {
-		to = append(to, recipient.Email)
-	}
-
+	
 	// smtp server configuration.
 	smtpHost := "smtp.gmail.com"
 	smtpPort := "587"
 
-	// Message.
-	message := []byte("This is a test email message.")
+	for _, recipient := range recipients {
+		tpl := template.New("welcome.html") // Create a template.
 
-	// Authentication.
-	auth := smtp.PlainAuth("", from, password, smtpHost)
+		// Get the string representation of a file, or an error if it doesn't exist:
+		html, err := box.FindString("welcome.html")
+		if err != nil {
+			fmt.Println(err)
+			return
+		}
 
-	// Sending email.
-	err := smtp.SendMail(smtpHost+":"+smtpPort, auth, from, to, message)
-	if err != nil {
-		fmt.Println(err)
-		return
+		// Authentication.
+		auth := smtp.PlainAuth("", from, password, smtpHost)
+
+		t, err := tpl.Parse(html)
+		if err != nil {
+			fmt.Println(err)
+			return
+		}
+
+		var body bytes.Buffer
+
+		t.Execute(&body, struct {
+			FirstName   string
+			LastName    string
+			URL			string
+		}{
+			FirstName:	recipient.FirstName,
+			LastName:	recipient.LastName,
+			URL:	 "www.google.com",
+		})
+
+		to := []string{
+			recipient.Email,
+		}
+
+		// Sending email.
+		err = smtp.SendMail(smtpHost+":"+smtpPort, auth, from, to, body.Bytes())
+		if err != nil {
+			fmt.Println(err)
+			return
+		}
 	}
 
 	fmt.Println("Email Sent Successfully!")

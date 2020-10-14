@@ -1,14 +1,14 @@
 package main
 
 import (
-"database/sql"
-"encoding/json"
-"errors"
-"github.com/Traineau/gomail/email"
-"github.com/Traineau/gomail/helpers"
-"github.com/streadway/amqp"
-"log"
-"time"
+	"database/sql"
+	"encoding/json"
+	"errors"
+	"github.com/Traineau/gomail/email"
+	"github.com/Traineau/gomail/helpers"
+	"github.com/streadway/amqp"
+	"log"
+	"time"
 )
 
 var (
@@ -16,13 +16,13 @@ var (
 )
 
 func main() {
-	conn, err := amqp.Dial("amqp://guest:guest@127.0.0.1:5672/")
+	conn, err := amqp.Dial("amqp://guest:guest@rabbitmq:5672/")
+	helpers.FailOnError(err, "Failed to connect to RabbitMQ")
 	err = dbConnect()
 	if err != nil {
 		log.Fatalf("could not connect to db: %v", err)
 	}
 
-	helpers.FailOnError(err, "Failed to connect to RabbitMQ")
 	defer conn.Close()
 
 	ch, err := conn.Channel()
@@ -89,6 +89,8 @@ func main() {
 
 			log.Printf("campaign: %+v", campaignFromRepo)
 			log.Printf("mailing list: %+v", mailingList)
+
+			sendEmail(mailingList.Recipients)
 		}
 	}()
 
@@ -99,7 +101,7 @@ func main() {
 
 func dbConnect() error {
 
-	dsn := "gomail:gomail@tcp(localhost:3306)/image_gomail?parseTime=true&charset=utf8"
+	dsn := "gomail:gomail@tcp(db:3306)/image_gomail?parseTime=true&charset=utf8"
 	db, err := sql.Open("mysql", dsn)
 
 	if err != nil {

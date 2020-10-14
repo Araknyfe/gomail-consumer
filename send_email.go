@@ -7,15 +7,15 @@ import (
 )
 
 func sendEmail(recipients []*email.Recipient) {
-	
+
 	// Sender data.
 	from := "swatxmathis@gmail.com"
 	password := "<Email Password>"
-	
+
 	// Receiver email address.
-	
+
 	var to []string
-	
+
 	for _, recipient := range recipients {
 		to = append(to, recipient.Email)
 	}
@@ -36,6 +36,6 @@ func sendEmail(recipients []*email.Recipient) {
 		fmt.Println(err)
 		return
 	}
-	
+
 	fmt.Println("Email Sent Successfully!")
 }

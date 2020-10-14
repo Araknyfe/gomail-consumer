@@ -89,7 +89,7 @@ func main() {
 
 			log.Printf("campaign: %+v", campaignFromRepo)
 			log.Printf("mailing list: %+v", mailingList)
-			
+
 			sendEmail(mailingList.Recipients)
 		}
 	}()
